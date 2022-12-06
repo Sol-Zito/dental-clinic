@@ -1,0 +1,5 @@
+INFO    2022-11-29 23:06:55,276 [http-nio-8090-exec-4] com.example.democlinicaodontologica.controller.PatientController  - Se ejecuto newPatient patientIdPatient(id=3, name=rosa, lastname=gonzales, dni=14562325, dateAdmission=Tue Nov 29 23:06:55 ART 2022, residence=Residence(id=4, street=null, number=null, location=null, province=null, patients=[]), bookings=[])
+INFO    2022-11-29 23:10:30,231 [http-nio-8090-exec-9] com.example.democlinicaodontologica.controller.DentistController  - se ejecuto newDentist en DenstisController
+INFO    2022-11-29 23:20:58,624 [http-nio-8090-exec-2] com.example.democlinicaodontologica.controller.DentistController  - se ejecuto newDentist en DenstisController
+INFO    2022-12-01 17:56:49,696 [http-nio-8090-exec-2] com.example.democlinicaodontologica.controller.DentistController  - dentits updated, DenstisController, dentist: Dentist(id=5, name=juan, lastname=carlose, tuition=365214, bookings=[])
+INFO    2022-12-01 23:27:51,989 [http-nio-8090-exec-8] com.example.democlinicaodontologica.controller.PatientController  - se ejecuto newPatient en PatientController

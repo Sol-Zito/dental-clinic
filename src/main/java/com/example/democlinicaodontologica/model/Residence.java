@@ -1,6 +1,7 @@
 package com.example.democlinicaodontologica.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,6 +33,7 @@ public class Residence implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "residence")
     /*@JoinColumn(name = "id_patient", referencedColumnName = "id_patient")*/
+    @JsonIgnore
     private Set<Patient> patients = new HashSet<>();
 
     public Residence() {

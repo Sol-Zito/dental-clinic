@@ -28,16 +28,13 @@ public class DentistServiceImpl implements DentistService {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public Optional<DentistDto> addDentist(Dentist dentist) throws ResourceNotfoundException {
+    public void addDentist(Dentist dentist) throws ResourceNotfoundException {
         if(dentistIdao.findById(dentist.getId()).isEmpty()){
-            Dentist dentist1 = dentistIdao.save(dentist);
-            DentistDto dentistDto;
-            dentistDto = objectMapper.convertValue(dentist1, DentistDto.class);
+            dentistIdao.save(dentist);
             LOGGER.info("dentits was added");
-            return Optional.of(dentistDto);
         } else {
             LOGGER.error("Denstist already exist, error in addDentist");
-            throw new ResourceNotfoundException("Denstist already exist");
+            throw new ResourceNotfoundException("Dentist already exist");
         }
     }
 
@@ -114,7 +111,4 @@ public class DentistServiceImpl implements DentistService {
         }
 
     }
-
-
-
 }

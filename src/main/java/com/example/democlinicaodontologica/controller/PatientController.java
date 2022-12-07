@@ -1,4 +1,5 @@
 package com.example.democlinicaodontologica.controller;
+import com.example.democlinicaodontologica.exceptions.ResourceNotfoundException;
 import com.example.democlinicaodontologica.model.Patient;
 import com.example.democlinicaodontologica.model.dto.BookingDto;
 import com.example.democlinicaodontologica.model.dto.PatientDto;
@@ -34,7 +35,7 @@ public class PatientController {
 
     //chequear si funciona con el if/else
     @GetMapping("/findPatient")
-    private ResponseEntity<PatientDto> findPatient(@PathVariable Long patientId) throws SQLException {
+    private ResponseEntity<PatientDto> findPatient(@PathVariable Long patientId)  {
         ResponseEntity response = null;
        if (patientService.findPatient(patientId).isPresent()){
            PatientDto patientDto = patientService.findPatient(patientId).orElse(null);
@@ -48,7 +49,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity deletePatient(@PathVariable("patientId") Long patientId) throws SQLException {
+    private ResponseEntity deletePatient(@PathVariable("patientId") Long patientId) throws ResourceNotfoundException {
         ResponseEntity response = null;
         if (patientService.findPatient(patientId).isPresent()) {
             patientService.deletePatient(patientId);
@@ -61,9 +62,9 @@ public class PatientController {
         return response;
     }
 
-    /*//chequear si asi no permite replica
+    //chequear si asi no permite replica
     @PostMapping("/newPatient")
-    private ResponseEntity newPatient(@RequestBody Patient patient) throws SQLException {
+    private ResponseEntity newPatient(@RequestBody Patient patient) throws ResourceNotfoundException {
         ResponseEntity response = null;
         if (patientService.findByDni(patient.getDni()).isPresent()){
             response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patiente exist");
@@ -75,16 +76,16 @@ public class PatientController {
         }
 
         return response;
-    }*/
 
-    @PostMapping("/newPatient")
-    public ResponseEntity newPatient(@RequestBody Patient patient) throws SQLException {
-        LOGGER.info("se ejecuto newPatient en PatientController");
-        return ResponseEntity.ok(patientService.addPatient(patient));
+        /*LOGGER.info("se ejecuto newPatient en PatientController");
+        patientService.addPatient(patient);
+        return ResponseEntity.ok(HttpStatus.OK);*/
     }
 
+
+
     @PutMapping("/updatePatient")
-    private ResponseEntity<Patient> updatePatient(@RequestBody Patient patient) throws SQLException {
+    private ResponseEntity<Patient> updatePatient(@RequestBody Patient patient) throws  ResourceNotfoundException {
         ResponseEntity response = null;
         if (patientService.findPatient(patient.getId()).isPresent()) {
             patientService.updatePatient(patient);
@@ -97,8 +98,8 @@ public class PatientController {
         return response;
     }
 
-    /*//chequear si funciona con el if/else
-    @GetMapping("/findPatientByDni")
+
+    @GetMapping("/{findPatientByDni}")
     public ResponseEntity<PatientDto> findPatientByDni( @PathVariable String dni){
         ResponseEntity response = null;
         if (patientService.findByDni(dni).isPresent()){
@@ -110,7 +111,7 @@ public class PatientController {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("patient not found ");
         }
         return response;
-    }*/
+    }
 
 
 }

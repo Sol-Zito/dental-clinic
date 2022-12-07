@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +52,7 @@ public class DentistController {
         return response;
     }
 
-    @GetMapping("/findDentist")
+    @GetMapping("/{findDentist}")
     private ResponseEntity findDentist(@PathVariable("id") Long dentistId) throws ResourceNotfoundException {
         Optional<DentistDto> dentistDto =  dentistService.find(dentistId);
         return ResponseEntity.ok(dentistDto);
@@ -62,7 +60,7 @@ public class DentistController {
 
     @PutMapping("/updateDentist")
     private ResponseEntity updateDentist(@RequestBody Dentist dentist) throws ResourceNotfoundException {
-       /* ResponseEntity response = null;
+       ResponseEntity response = null;
         if (dentistService.find(dentist.getId()).isPresent()) {
             dentistService.update(dentist);
             LOGGER.info("se ejecuto updateDentist en DenstisController, dentist: " + dentist.toString());
@@ -71,10 +69,7 @@ public class DentistController {
             LOGGER.error("no se puedo ejecutar updateDentist en DenstisController");
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return response;*/
-        dentistService.update(dentist);
-        LOGGER.info("dentits updated, DenstisController, dentist: " + dentist.toString());
-        return ResponseEntity.status(HttpStatus.OK).body("Updated");
+        return response;
     }
 
     @GetMapping("/listDentist")
@@ -82,12 +77,11 @@ public class DentistController {
         return dentistService.findAll();
     }
 
-   /* //chequear esto
     @GetMapping("/findByLastname")
-    public ResponseEntity findByName(@PathVariable String lastname){
-        Dentist dentist= dentistService.findByLastname(lastname).orElse(null);
+    public ResponseEntity findByName(@PathVariable String lastname) throws ResourceNotfoundException {
+        Optional<DentistDto> dentist = dentistService.findByLastname(lastname);
         return ResponseEntity.ok(dentist);
-    }*/
+    }
 
 
 

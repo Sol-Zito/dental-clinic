@@ -10,25 +10,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/residence")
 public class ResidenceController {
-    private final static Logger LOGGER = Logger.getLogger(ResidenceController.class);
-    @Autowired
-    private ResidenceServiceImpl residenceService;
 
-    @GetMapping("/findResidence")
-    private ResponseEntity<ResidenceDto> findResidence(@PathVariable Long residenceId) throws SQLException {
+    private final static Logger LOGGER = Logger.getLogger(ResidenceController.class);
+    private final ResidenceServiceImpl residenceService;
+
+    @Autowired
+    public ResidenceController(ResidenceServiceImpl residenceService) {
+        this.residenceService = residenceService;
+    }
+
+    @GetMapping("/{findResidence}")
+    private ResponseEntity<ResidenceDto> findResidence(@PathVariable Long residenceId) {
         ResidenceDto residenceDto =  residenceService.findResidence(residenceId).orElse(null);
         LOGGER.info("Se ejecuto el findResidence en controller");
         return ResponseEntity.ok(residenceDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteResidence(@PathVariable Long id) throws SQLException {
+    public ResponseEntity<String> deleteResidence(@PathVariable Long id) throws ResourceNotfoundException {
         ResponseEntity<String> response = null;
         if (residenceService.findResidence(id).isPresent()) {
             residenceService.deleteResidence(id);
@@ -42,13 +44,14 @@ public class ResidenceController {
     }
 
     @PostMapping("/newResidence")
-    public ResponseEntity<Optional<ResidenceDto>> newResidence(@RequestBody Residence residence) throws SQLException {
+    public ResponseEntity newResidence(@RequestBody Residence residence) throws ResourceNotfoundException {
         LOGGER.info("Se ejecuto newResidence en controller residence" + residence.toString());
-        return ResponseEntity.ok(residenceService.addResidence(residence));
+        residenceService.addResidence(residence);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PutMapping("/updateResidence")
-    private ResponseEntity<ResidenceDto> updateResidence(@RequestBody Residence residence) throws SQLException {
+    private ResponseEntity<ResidenceDto> updateResidence(@RequestBody Residence residence) throws ResourceNotfoundException {
         ResponseEntity response = null;
         if (residenceService.findResidence(residence.getId()).isPresent()) {
             residenceService.update(residence);
@@ -62,10 +65,5 @@ public class ResidenceController {
         return response;
     }
 
-    @ExceptionHandler({ResourceNotfoundException.class})
-    public String processResourceNotFoundException(ResourceNotfoundException resourceNotfoundException){
-
-        return resourceNotfoundException.getMessage();
-    }
 
 }

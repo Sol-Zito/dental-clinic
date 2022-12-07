@@ -1,20 +1,17 @@
 package com.example.democlinicaodontologica.service.impl;
 
-import com.example.democlinicaodontologica.controller.ResidenceController;
-import com.example.democlinicaodontologica.model.Patient;
+import com.example.democlinicaodontologica.exceptions.ResourceNotfoundException;
 import com.example.democlinicaodontologica.model.Residence;
-import com.example.democlinicaodontologica.model.dto.PatientDto;
 import com.example.democlinicaodontologica.model.dto.ResidenceDto;
 import com.example.democlinicaodontologica.repository.ResidenceRepository;
 import com.example.democlinicaodontologica.service.ResidenceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,18 +27,19 @@ public class ResidenceServiceImpl implements ResidenceService {
 
 
     @Override
-    public Optional<ResidenceDto> addResidence(Residence residence) {
-        ObjectMapper objectMapper1 = new ObjectMapper();
-        Residence residence2 = residenceIdao.save(residence);
-        ResidenceDto residenceDto1;
-        residenceDto1 = objectMapper1.convertValue(residence2, ResidenceDto.class);
-        return Optional.ofNullable(residenceDto1);
+    public void addResidence(Residence residence) throws ResourceNotfoundException {
+        if(Objects.nonNull(findResidence(residence.getId()))) {
+            LOGGER.error("residence ya existe");
+            throw new ResourceNotfoundException("residence ya existe");
+        }else {
+            residenceIdao.save(residence);
+        }
     }
 
     @Override
     public Optional<ResidenceDto> findResidence(Long id) {
         ObjectMapper objectMapper = new ObjectMapper();
-        Optional<Residence> domicilio1 = residenceIdao.findById(id);
+        Residence domicilio1 = residenceIdao.findById(id).get();
         ResidenceDto residenceDto;
         residenceDto = objectMapper.convertValue(domicilio1, ResidenceDto.class);
         return Optional.of(residenceDto);
@@ -57,17 +55,28 @@ public class ResidenceServiceImpl implements ResidenceService {
     }
 
     @Override
-    public void deleteResidence(Long id) {
-        residenceIdao.deleteById(id);
+    public void deleteResidence(Long id) throws ResourceNotfoundException {
+        if(Objects.nonNull(findResidence(id))) {
+            residenceIdao.deleteById(id);
+        }else {
+            LOGGER.error("residence no existe");
+            throw new ResourceNotfoundException("residence no existe");
+        }
+
     }
 
     @Override
-    public Optional<ResidenceDto> update(Residence residence) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Residence residence1 = residenceIdao.save(residence);
-        ResidenceDto residenceDto;
-        residenceDto = objectMapper.convertValue(residence1, ResidenceDto.class);
-        return Optional.of(residenceDto);
+    public Optional<ResidenceDto> update(Residence residence) throws ResourceNotfoundException {
+        if(Objects.nonNull(findResidence(residence.getId()))) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Residence residence1 = residenceIdao.save(residence);
+            ResidenceDto residenceDto;
+            residenceDto = objectMapper.convertValue(residence1, ResidenceDto.class);
+            return Optional.of(residenceDto);
+        }else {
+            LOGGER.error("residence no existe");
+            throw new ResourceNotfoundException("residence no existe");
+        }
     }
 
 }

@@ -1,6 +1,5 @@
 package com.example.democlinicaodontologica.repository;
 import com.example.democlinicaodontologica.model.Dentist;
-import com.example.democlinicaodontologica.model.dto.DentistDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;

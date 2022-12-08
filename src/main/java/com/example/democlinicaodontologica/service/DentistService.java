@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DentistService {
-    void addDentist(Dentist dentist) throws ResourceNotfoundException;
+    Optional<DentistDto> addDentist(Dentist dentist) throws ResourceNotfoundException;
     void delete(Long id) throws ResourceNotfoundException;
     Optional<DentistDto> find(Long id) throws ResourceNotfoundException;
     List<Optional<DentistDto>> findAll();

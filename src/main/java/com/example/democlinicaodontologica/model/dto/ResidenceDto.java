@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResidenceDto {
-    private Long id;
+
     private String street;
     private String number;
     private String location;
@@ -18,8 +18,8 @@ public class ResidenceDto {
     public ResidenceDto() {
     }
 
-    public ResidenceDto(Long id, String street, String number, String location, String province) {
-        this.id = id;
+    public ResidenceDto( String street, String number, String location, String province) {
+
         this.street = street;
         this.number = number;
         this.location = location;

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,16 +26,20 @@ public class DentistServiceImpl implements DentistService {
         this.dentistIdao = dentistIdao;
     }
 
-    ObjectMapper objectMapper = new ObjectMapper();
+
 
     @Override
-    public void addDentist(Dentist dentist) throws ResourceNotfoundException {
-        if(dentistIdao.findById(dentist.getId()).isEmpty()){
-            dentistIdao.save(dentist);
-            LOGGER.info("dentits was added");
-        } else {
+    public Optional<DentistDto> addDentist(Dentist dentist) throws ResourceNotfoundException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        if(dentistIdao.findByTuition(dentist.getTuition()).isPresent()){
             LOGGER.error("Denstist already exist, error in addDentist");
-            throw new ResourceNotfoundException("Dentist already exist");
+            throw new ResourceNotfoundException("Denstist already exist");
+        }else {
+            Dentist dentist1 = dentistIdao.save(dentist);
+            DentistDto dentistDto;
+            dentistDto = objectMapper.convertValue(dentist1, DentistDto.class);
+            LOGGER.info("dentits was added");
+            return Optional.of(dentistDto);
         }
     }
 
@@ -51,20 +56,23 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public Optional<DentistDto> find(Long id) throws ResourceNotfoundException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        // todavia no funciona
         DentistDto dentistDto;
-        if(dentistIdao.findById(id).isEmpty()){
-            LOGGER.error("Dentist don't exist with this id");
-            throw new ResourceNotfoundException("Dentist don't exist with this id");
-        }else {
-            Optional<Dentist> dentist = Optional.of(dentistIdao.findById(id).get());
+        if(Objects.nonNull(dentistIdao.findById(id))){
+            Dentist dentist = dentistIdao.findById(id).get();
             dentistDto = objectMapper.convertValue(dentist, DentistDto.class);
             LOGGER.info("Dentist found: " + dentistDto.toString());
             return Optional.of(dentistDto);
+        } else {
+            LOGGER.error("Dentist don't exist with this id");
+            throw new ResourceNotfoundException("Dentist don't exist with this id");
         }
     }
 
     @Override
     public List<Optional<DentistDto>> findAll() {
+        ObjectMapper objectMapper = new ObjectMapper();
         List<Dentist> dentist1 = dentistIdao.findAll();
         DentistDto dentistDto;
         dentistDto = objectMapper.convertValue(dentist1, DentistDto.class);
@@ -73,20 +81,22 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public Optional<DentistDto> update(Dentist dentist) throws ResourceNotfoundException {
-        if (dentistIdao.findById(dentist.getId()).isEmpty()){
-            LOGGER.error("Dentist is not found for the update");
-            throw new ResourceNotfoundException("Dentist don't exist for the update");
-        }else {
+        ObjectMapper objectMapper = new ObjectMapper();
+        if(Objects.nonNull(dentistIdao.findById(dentist.getId()))){
             Dentist dentist1 = dentistIdao.save(dentist);
             DentistDto dentistDto;
             dentistDto = objectMapper.convertValue(dentist1, DentistDto.class);
             LOGGER.info("Dentist updated: " + dentistDto.toString());
             return Optional.of(dentistDto);
+        }else {
+            LOGGER.error("Dentist is not found for the update");
+            throw new ResourceNotfoundException("Dentist don't exist for the update");
         }
     }
 
     @Override
     public Optional<DentistDto> findByTuition(Integer tuition) throws ResourceNotfoundException {
+        ObjectMapper objectMapper = new ObjectMapper();
         if (dentistIdao.findByTuition(tuition).isEmpty()){
             LOGGER.error("Dentist don't exist with this tuition");
             throw new ResourceNotfoundException("Dentist don't existe with this tuition");
@@ -101,6 +111,7 @@ public class DentistServiceImpl implements DentistService {
 
     @Override
     public Optional<DentistDto> findByLastname(String lastname) throws ResourceNotfoundException {
+        ObjectMapper objectMapper = new ObjectMapper();
         if(dentistIdao.findByLastname(lastname).isEmpty()){
             throw new ResourceNotfoundException("Dentist don't exist");
         }else {
@@ -111,4 +122,7 @@ public class DentistServiceImpl implements DentistService {
         }
 
     }
+
+
+
 }

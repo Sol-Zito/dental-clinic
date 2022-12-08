@@ -18,8 +18,7 @@ import java.util.Set;
 @Setter
 @ToString
 public class Patient implements Serializable {
-    /* en caso de q exista la tabla
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) */
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id_patient", nullable = false)

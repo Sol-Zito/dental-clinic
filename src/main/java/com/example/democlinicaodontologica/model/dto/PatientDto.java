@@ -12,7 +12,7 @@ import java.util.Date;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PatientDto {
-    private Long id;
+
     private String name;
     private String lastname;
     private Date dateAdmission;
@@ -21,8 +21,8 @@ public class PatientDto {
     public PatientDto() {
     }
 
-    public PatientDto(Long id, String name, String lastname, Date dateAdmission, Residence residence) {
-        this.id = id;
+    public PatientDto(String name, String lastname, Date dateAdmission, Residence residence) {
+
         this.name = name;
         this.lastname = lastname;
         this.dateAdmission = dateAdmission;

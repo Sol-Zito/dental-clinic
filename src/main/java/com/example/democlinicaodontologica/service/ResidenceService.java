@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ResidenceService {
-    void addResidence(Residence residence) throws ResourceNotfoundException;
+    Optional<ResidenceDto> addResidence(Residence residence);
     Optional<ResidenceDto> findResidence(Long id);
     List<Optional<ResidenceDto>> findAll();
     void deleteResidence(Long id) throws ResourceNotfoundException;

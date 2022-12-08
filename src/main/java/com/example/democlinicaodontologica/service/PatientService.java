@@ -1,6 +1,5 @@
 package com.example.democlinicaodontologica.service;
 
-
 import com.example.democlinicaodontologica.exceptions.ResourceNotfoundException;
 import com.example.democlinicaodontologica.model.Patient;
 import com.example.democlinicaodontologica.model.dto.PatientDto;
@@ -13,5 +12,6 @@ public interface PatientService {
     void deletePatient(Long id) throws ResourceNotfoundException;
     Optional<List<PatientDto>> findAll();
     Optional<PatientDto> findPatient(Long id);
-    void addPatient(Patient patient) throws ResourceNotfoundException;
+    Optional<PatientDto> addPatient(Patient patient);
+
 }

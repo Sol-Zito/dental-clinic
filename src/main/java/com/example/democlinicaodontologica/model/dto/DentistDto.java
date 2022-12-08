@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DentistDto {
-    private Long id;
+
     private String name;
     private String lastname;
 
@@ -18,8 +18,8 @@ public class DentistDto {
     public DentistDto() {
     }
 
-    public DentistDto(Long id, String name, String lastname) {
-        this.id = id;
+    public DentistDto( String name, String lastname) {
+
         this.name = name;
         this.lastname = lastname;
     }

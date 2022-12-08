@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,13 +26,13 @@ public class ResidenceServiceImpl implements ResidenceService {
 
 
     @Override
-    public void addResidence(Residence residence) throws ResourceNotfoundException {
-        if(Objects.nonNull(findResidence(residence.getId()))) {
-            LOGGER.error("residence ya existe");
-            throw new ResourceNotfoundException("residence ya existe");
-        }else {
-            residenceIdao.save(residence);
-        }
+    public Optional<ResidenceDto> addResidence(Residence residence) {
+        ObjectMapper objectMapper1 = new ObjectMapper();
+        Residence residence2 = residenceIdao.save(residence);
+        ResidenceDto residenceDto1;
+        residenceDto1 = objectMapper1.convertValue(residence2, ResidenceDto.class);
+        LOGGER.info("resident add");
+        return Optional.ofNullable(residenceDto1);
     }
 
     @Override
@@ -42,6 +41,7 @@ public class ResidenceServiceImpl implements ResidenceService {
         Residence domicilio1 = residenceIdao.findById(id).get();
         ResidenceDto residenceDto;
         residenceDto = objectMapper.convertValue(domicilio1, ResidenceDto.class);
+        LOGGER.info("resident: " + residenceDto);
         return Optional.of(residenceDto);
     }
 
@@ -56,26 +56,27 @@ public class ResidenceServiceImpl implements ResidenceService {
 
     @Override
     public void deleteResidence(Long id) throws ResourceNotfoundException {
-        if(Objects.nonNull(findResidence(id))) {
+        if (residenceIdao.findById(id).isPresent()){
             residenceIdao.deleteById(id);
+            LOGGER.info("resident removed");
         }else {
-            LOGGER.error("residence no existe");
-            throw new ResourceNotfoundException("residence no existe");
+            LOGGER.error("resident not found");
+            throw new ResourceNotfoundException("resident not found");
         }
 
     }
 
     @Override
     public Optional<ResidenceDto> update(Residence residence) throws ResourceNotfoundException {
-        if(Objects.nonNull(findResidence(residence.getId()))) {
-            ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (residenceIdao.findById(residence.getId()).isPresent()) {
             Residence residence1 = residenceIdao.save(residence);
             ResidenceDto residenceDto;
             residenceDto = objectMapper.convertValue(residence1, ResidenceDto.class);
             return Optional.of(residenceDto);
         }else {
-            LOGGER.error("residence no existe");
-            throw new ResourceNotfoundException("residence no existe");
+            LOGGER.error("resident not found");
+            throw new ResourceNotfoundException("resident not found");
         }
     }
 

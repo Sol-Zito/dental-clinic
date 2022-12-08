@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BookingDto {
-    private Long id;
+
     private Date dateTime;
     private Patient patient;
     private Dentist dentist;
@@ -22,8 +22,8 @@ public class BookingDto {
     public BookingDto() {
     }
 
-    public BookingDto(Long id, Date dateTime, Patient patient, Dentist dentist, boolean confirmdate) {
-        this.id = id;
+    public BookingDto(Date dateTime, Patient patient, Dentist dentist, boolean confirmdate) {
+
         this.dateTime = dateTime;
         this.patient = patient;
         this.dentist = dentist;

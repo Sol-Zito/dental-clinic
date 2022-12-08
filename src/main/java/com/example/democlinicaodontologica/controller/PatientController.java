@@ -1,7 +1,6 @@
 package com.example.democlinicaodontologica.controller;
 import com.example.democlinicaodontologica.exceptions.ResourceNotfoundException;
 import com.example.democlinicaodontologica.model.Patient;
-import com.example.democlinicaodontologica.model.dto.BookingDto;
 import com.example.democlinicaodontologica.model.dto.PatientDto;
 import com.example.democlinicaodontologica.service.impl.PatientServiceImpl;
 import org.apache.log4j.Logger;
@@ -10,108 +9,73 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/patient")
 public class PatientController {
+
     private final static Logger LOGGER = Logger.getLogger(PatientController.class);
 
     @Autowired
     private PatientServiceImpl patientService;
 
-    // GET MAPPING
     @GetMapping("/saludo")
     private String saludo()  {
         return "Buenas paciente";
     }
 
     @GetMapping("/listPatient")
-    private Optional<List<PatientDto>> listPatient() throws SQLException {
+    private Optional<List<PatientDto>> listPatient() {
         return patientService.findAll();
     }
 
-    //chequear si funciona con el if/else
-    @GetMapping("/findPatient")
-    private ResponseEntity<PatientDto> findPatient(@PathVariable Long patientId)  {
+    @GetMapping(path = "/id/{id}")
+    private ResponseEntity<PatientDto> findPatient(@PathVariable Long patientId) {
         ResponseEntity response = null;
-       if (patientService.findPatient(patientId).isPresent()){
-           PatientDto patientDto = patientService.findPatient(patientId).orElse(null);
-           LOGGER.info("Se ejecuto findPatient patientId" + patientDto.toString());
-           response= ResponseEntity.status(HttpStatus.FOUND).build();
-       }else {
-           LOGGER.error("Error al ejecutar findPatient patientId" + patientId);
-           response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-       }
+        PatientDto patientDto = patientService.findPatient(patientId).orElse(null);
+        LOGGER.info("Se ejecuto findPatient patientId" + patientDto);
+        response= ResponseEntity.status(HttpStatus.OK).body(patientDto);
        return response;
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity deletePatient(@PathVariable("patientId") Long patientId) throws ResourceNotfoundException {
+    private ResponseEntity deletePatient(@PathVariable Long patientId) throws ResourceNotfoundException {
         ResponseEntity response = null;
-        if (patientService.findPatient(patientId).isPresent()) {
-            patientService.deletePatient(patientId);
-            LOGGER.info("Se ejecuto deletePatient patientId" + patientId);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");
-        } else {
-            LOGGER.error("Error al ejecutar deletePatient patientId" + patientId);
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        patientService.deletePatient(patientId);
+        LOGGER.info("Se ejecuto deletePatient patientId" + patientId);
+        response = ResponseEntity.status(HttpStatus.OK).body("Eliminado");
         return response;
     }
 
-    //chequear si asi no permite replica
     @PostMapping("/newPatient")
-    private ResponseEntity newPatient(@RequestBody Patient patient) throws ResourceNotfoundException {
+    private ResponseEntity<String> newPatient(@RequestBody Patient patient) {
         ResponseEntity response = null;
-        if (patientService.findByDni(patient.getDni()).isPresent()){
-            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patiente exist");
-            LOGGER.error("El paciente ya existe");
-        }else{
-            patientService.addPatient(patient);
-            response = ResponseEntity.ok("Patient add");
-            LOGGER.info("Se ejecuto newPatient patientId" + patient.toString());
-        }
-
+        Optional<PatientDto> patient1 = patientService.addPatient(patient);
+        LOGGER.info("Se ejecuto newPatient patientId" + patient1);
+        response = ResponseEntity.ok("se agrego patient: " + patient1);
         return response;
-
-        /*LOGGER.info("se ejecuto newPatient en PatientController");
-        patientService.addPatient(patient);
-        return ResponseEntity.ok(HttpStatus.OK);*/
     }
-
 
 
     @PutMapping("/updatePatient")
-    private ResponseEntity<Patient> updatePatient(@RequestBody Patient patient) throws  ResourceNotfoundException {
+    private ResponseEntity<Patient> updatePatient(@RequestBody Patient patient) throws ResourceNotfoundException {
         ResponseEntity response = null;
-        if (patientService.findPatient(patient.getId()).isPresent()) {
-            patientService.updatePatient(patient);
-            LOGGER.info("Se ejecuto updatePatient patientId" + patient.toString());
-            response = ResponseEntity.status(HttpStatus.OK).body("Actualizado");
-        } else {
-            LOGGER.error("Error al ejecutar updatePatient patientId");
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        patientService.updatePatient(patient);
+        LOGGER.info("Se ejecuto updatePatient patientId" + patient);
+        response = ResponseEntity.status(HttpStatus.OK).body("Actualizado");
         return response;
     }
 
-
-    @GetMapping("/{findPatientByDni}")
-    public ResponseEntity<PatientDto> findPatientByDni( @PathVariable String dni){
+    @GetMapping(path = "/dni/{dni}")
+    public ResponseEntity findPatientByDni( @PathVariable String dni) throws ResourceNotfoundException {
+        //devuelve valores null
         ResponseEntity response = null;
-        if (patientService.findByDni(dni).isPresent()){
-            Optional<PatientDto> patientDto = patientService.findByDni(dni);
-            LOGGER.info("Se ejecuto findPatientByDni patientId" + patientDto.toString());
-            response= ResponseEntity.status(HttpStatus.FOUND).build();
-        }else {
-            LOGGER.error("Error al ejecutar findPatient patientId"+ dni);
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("patient not found ");
-        }
+        PatientDto patientDto = patientService.findByDni(dni).get();
+        LOGGER.info("Se ejecuto findPatientByDni patientId" + patientDto);
+        response = ResponseEntity.status(HttpStatus.FOUND).body(patientDto);
         return response;
     }
-
 
 }

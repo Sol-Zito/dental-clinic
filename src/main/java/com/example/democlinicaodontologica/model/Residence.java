@@ -32,7 +32,6 @@ public class Residence implements Serializable {
     private String province;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "residence")
-    /*@JoinColumn(name = "id_patient", referencedColumnName = "id_patient")*/
     @JsonIgnore
     private Set<Patient> patients = new HashSet<>();
 
